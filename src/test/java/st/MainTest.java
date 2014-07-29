@@ -32,7 +32,7 @@ public class MainTest {
         
         // ********* Do warming
         System.out.println("Warming...." + count);
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < 1000; i++) {
             JsonNode tree = mapper.readTree(json);
 
             mapper.treeToValue(tree, MyBean.class);
