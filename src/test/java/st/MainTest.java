@@ -23,7 +23,7 @@ public class MainTest {
 
     static String json = "{\"type\":\"clist\",\"message\":\"msg\",\"date\":1395388393205,\"s_array\":[\"v1\",\"v2\",\"v3\"],\"i_array\":[1,2,3]}";
 
-    static int count = 1000000; // 1 millions
+    static final int count = 1000000; // 1 millions
     
     @Test
     public void test_1() throws Exception {
@@ -32,8 +32,8 @@ public class MainTest {
         
         JsonNode tree = mapper.readTree(json);
 
-        // Do warming
-        System.out.println("Warming....");
+        // ********* Do warming
+        System.out.println("Warming...." + count);
         for (int i = 0; i < count; i++) {
             mapper.treeToValue(tree, MyBean.class);
             if (i % 10000 == 0) {
@@ -42,7 +42,7 @@ public class MainTest {
         }
         System.out.println("\nStarting test....");
 
-        // Do mapper mapping
+        // ********* Do object mapping
         long start = System.currentTimeMillis();
         MyBean myBean = null;
         for (int i = 0; i < count; i++) {
@@ -57,7 +57,7 @@ public class MainTest {
         check(myBean);
         
 
-        // Do manual mapping
+        // ******** Do manual mapping
         start = System.currentTimeMillis();
         for (int i = 0; i < count; i++) {
             myBean = new MyBean();
@@ -89,7 +89,11 @@ public class MainTest {
         
         check(myBean);
         
-        // Do Java Serialization
+        // ********* Do Java Serialization
+        
+//        myBean.setI_array(null);
+//        myBean.setS_array(null);
+        
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(bytes);
         out.writeObject(myBean); // Use existent bean instance
@@ -102,11 +106,13 @@ public class MainTest {
         for (int i = 0; i < count; i++) {
             ObjectInputStream ins = new ObjectInputStream(new ByteArrayInputStream(byteObj));
             
-            myBean = (MyBean) ins.readObject();
+//            myBean = (MyBean) ins.readObject();
             
             if (i % 10000 == 0) {
-                System.out.print(".");
+//                System.out.print(".");
             }
+            
+            ins.close();
         }
         
         System.out.println("\nJavaSerialization: " + (System.currentTimeMillis() - start));
@@ -116,15 +122,16 @@ public class MainTest {
 
     private static void check(MyBean myBean) {
         assertNotNull(myBean);
+        assertNotNull(myBean.type);
         assertNotNull(myBean.date);
         assertNotNull(myBean.message);
+        
         assertNotNull(myBean.i_array);
         assertTrue(myBean.i_array.size() == 3);
         assertTrue(myBean.i_array.get(0) == 1);
         assertNotNull(myBean.s_array);
         assertTrue(myBean.s_array.size() == 3);
         assertTrue(myBean.s_array.contains("v1"));
-        assertNotNull(myBean.type);
     }
 
     public static class MyBean implements Serializable {
