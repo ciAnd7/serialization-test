@@ -30,11 +30,11 @@ public class MainTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         
-        JsonNode tree = mapper.readTree(json);
-
         // ********* Do warming
         System.out.println("Warming...." + count);
         for (int i = 0; i < count; i++) {
+            JsonNode tree = mapper.readTree(json);
+
             mapper.treeToValue(tree, MyBean.class);
             if (i % 10000 == 0) {
                 //System.out.print(".");
@@ -46,6 +46,8 @@ public class MainTest {
         long start = System.currentTimeMillis();
         MyBean myBean = null;
         for (int i = 0; i < count; i++) {
+            JsonNode tree = mapper.readTree(json);
+
             myBean = mapper.treeToValue(tree, MyBean.class);
             if (i % 10000 == 0) {
                 //System.out.print(".");
@@ -60,6 +62,8 @@ public class MainTest {
         // ******** Do manual mapping
         start = System.currentTimeMillis();
         for (int i = 0; i < count; i++) {
+            JsonNode tree = mapper.readTree(json);
+
             myBean = new MyBean();
             
             myBean.setDate(new Date(tree.get("date").asLong()));
