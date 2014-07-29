@@ -106,7 +106,7 @@ public class MainTest {
         for (int i = 0; i < count; i++) {
             ObjectInputStream ins = new ObjectInputStream(new ByteArrayInputStream(byteObj));
             
-//            myBean = (MyBean) ins.readObject();
+            myBean = (MyBean) ins.readObject();
             
             if (i % 10000 == 0) {
 //                System.out.print(".");
